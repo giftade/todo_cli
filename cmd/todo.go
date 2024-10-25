@@ -23,10 +23,20 @@ func AddTask(task interface{}) error{
 	}
 	defer file.Close()
 
+	fileInfo, err := file.Stat()
+	if err != nil {
+		return err
+	}
+
 	tasks := []*Todo{
 		{1, task, time.Now()},
 	}
-	err = gocsv.MarshalFile(tasks, file)
+
+	if fileInfo.Size() == 0 {
+		err = gocsv.MarshalFile(tasks, file)
+		} else {
+		err = gocsv.MarshalWithoutHeaders(tasks, file)
+	}
 	if err != nil {
 		return err
 	}

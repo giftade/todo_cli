@@ -1,3 +1,5 @@
 go.mod
 go.sum
 todo.drawio
+.vscode
+task.csv

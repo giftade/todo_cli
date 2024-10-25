@@ -15,7 +15,7 @@ type Todo struct {
 }
 
 func AddTask(task interface{}) error{
-	file, err := os.Create("task.csv")
+	file, err := os.OpenFile("task.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error while executing %s/n", err)

@@ -9,7 +9,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "todo_cli",
+	Use:   "tasks",
 	Short: "Todo_Cli is a cli application for managing tasks in the terminal",
 	Long: "Todo_Cli is a cli application for managing tasks in the terminal",
   Run: func(cmd *cobra.Command, args []string) {

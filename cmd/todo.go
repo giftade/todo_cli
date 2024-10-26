@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"text/tabwriter"
 	"time"
 
 	"github.com/gocarina/gocsv"
@@ -15,26 +16,26 @@ type Todo struct {
 	Created string `csv:"created"`
 }
 
-func AddTask(task string) {
+func AddTask(task string) (id int, err error) {
 	file, err := os.OpenFile("task.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return 0, err
 	}
 	defer file.Close()
 
 	existingFile, err := os.Open("task.csv")
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return 0, err
 	}
 	defer existingFile.Close()
 
 	fileInfo, err := existingFile.Stat()
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return 0,err
 	}
 
 	var tasks []*Todo
@@ -43,7 +44,7 @@ func AddTask(task string) {
 
 		if err := gocsv.UnmarshalFile(existingFile, &tasks); err != nil {
 			fmt.Printf("err: %s", err)
-			return
+			return 0,err
 		}
 	}
 	var newID int
@@ -69,33 +70,41 @@ func AddTask(task string) {
 
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return 0,err
 	}
+	return newID, nil 
 }
 
-func ListTask() {
+func ListTask() error {
 	file, err := os.Open("task.csv")
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return err
 	}
 
 	fileInfo, err := file.Stat()
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return err
 	}
 
 	if fileInfo.Size() <= 0 {
 		fmt.Println("No tasks...")
-		return
+		return err
 	}
 
-	var tasks []*Todo
+	var tasks []Todo
 
 	if err := gocsv.UnmarshalFile(file, &tasks); err != nil {
 		fmt.Printf("err: %s", err)
-		return
+		return err
 	}
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 5, ' ', 0)
+	fmt.Fprintln(w, "ID\tTask\tCreated")
 
+	for _, task := range tasks {
+		fmt.Fprintf(w, "%d\t%s\t%s\n",task.ID, task.Task, task.Created)
+	}
+	w.Flush()
+	return nil
 }

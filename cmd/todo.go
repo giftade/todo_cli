@@ -35,7 +35,7 @@ func AddTask(task string) (id int, err error) {
 	fileInfo, err := existingFile.Stat()
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return 0,err
+		return 0, err
 	}
 
 	var tasks []*Todo
@@ -44,7 +44,7 @@ func AddTask(task string) (id int, err error) {
 
 		if err := gocsv.UnmarshalFile(existingFile, &tasks); err != nil {
 			fmt.Printf("err: %s", err)
-			return 0,err
+			return 0, err
 		}
 	}
 	var newID int
@@ -70,12 +70,12 @@ func AddTask(task string) (id int, err error) {
 
 	if err != nil {
 		fmt.Printf("err: %s", err)
-		return 0,err
+		return 0, err
 	}
-	return newID, nil 
+	return newID, nil
 }
 
-func ListTask() error {
+func ListTask(showCompletedTask bool) error {
 	file, err := os.Open("task.csv")
 	if err != nil {
 		fmt.Printf("err: %s", err)
@@ -100,10 +100,21 @@ func ListTask() error {
 		return err
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 5, ' ', 0)
-	fmt.Fprintln(w, "ID\tTask\tCreated")
 
+	if showCompletedTask {
+		fmt.Fprintln(w, "ID\tTask\tCreated\tDone")
+		for _, task := range tasks {
+			fmt.Fprintf(w, "%d\t%s\t%s\t%v\n", task.ID, task.Task, task.Created, task.Done)
+		}
+		w.Flush()
+		return nil
+	}
+
+	fmt.Fprintln(w, "ID\tTask\tCreated")
 	for _, task := range tasks {
-		fmt.Fprintf(w, "%d\t%s\t%s\n",task.ID, task.Task, task.Created)
+		if !task.Done {
+			fmt.Fprintf(w, "%d\t%s\t%s\n", task.ID, task.Task, task.Created)
+		}
 	}
 	w.Flush()
 	return nil

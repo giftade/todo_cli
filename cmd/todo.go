@@ -119,3 +119,7 @@ func ListTask(showCompletedTask bool) error {
 	w.Flush()
 	return nil
 }
+
+func CompleteTask(id int){
+
+}

@@ -20,3 +20,4 @@ func init() {
 	listTaskCmd.Flags().BoolVarP(&showCompletedTask, "all", "a", false, "list all tasks")
 	rootCmd.AddCommand(listTaskCmd)
 }
+

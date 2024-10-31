@@ -103,7 +103,7 @@ func ListTask(showCompletedTask bool) error {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 5, ' ', 0)
 
 	if showCompletedTask {
-		fmt.Fprintln(w, "ID\tTask\tCreated\tDone")
+		fmt.Fprintln(w, `ID	Task	Created	Done`)
 		for _, task := range tasks {
 			fmt.Fprintf(w, "%d\t%s\t%s\t%v\n", task.ID, task.Task, task.Created, task.Done)
 		}
